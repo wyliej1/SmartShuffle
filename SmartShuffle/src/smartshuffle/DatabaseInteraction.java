@@ -15,14 +15,14 @@ import java.sql.Statement;
  */
 public class DatabaseInteraction {
 Connection conn;
-    private String url = "jdbc:sqlite:/Users/jwolfe/Developer/NetBeansProjects/SmartShuffle/SmartShuffle/smartshuffle.db";
+    private final String url = "jdbc:sqlite:/Users/jwolfe/Developer/NetBeansProjects/SmartShuffle/SmartShuffle/smartshuffle.db";
     /**
      * puts a song in the Database
+     * @throws java.sql.SQLException
      */
 public void connect() throws SQLException{
    conn = DriverManager.getConnection(url);
    System.out.println("Connected to SQLite Database");
-   testQuery();
     
 }
 
@@ -34,10 +34,4 @@ public void connect() throws SQLException{
         
     }
     
-    public void testQuery() throws SQLException{
-        Statement stmt  = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM SONG;");
-        System.out.println(rs.getString("Title"));
-        
-    }
 }
