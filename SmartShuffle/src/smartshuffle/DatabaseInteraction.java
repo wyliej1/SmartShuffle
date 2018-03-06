@@ -60,4 +60,22 @@ public class DatabaseInteraction {
         stmt.setString(3, location);
         stmt.executeUpdate();
     }
+    //query a song from the dynamic Song playlist (the queue)
+    
+    protected ResultSet querySong(String songName) throws SQLException{
+        String query = "SELECT * from Song WHERE Song = ?";
+        PreparedStatement statement2 = conn.prepareStatement(query);
+        statement2.setString(1, songName);
+        ResultSet rs = statement2.executeQuery();
+        return rs;
+    }
+    //insert new songs into Master
+    protected void insertMaster(String Title, String tag, String location) throws SQLException{
+        String query = "INSERT INTO MasterList (`title`, `tag`, 'filelocation') VALUES (?, ?, ?);";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setString(1, Title);
+        stmt.setString(2, tag);
+        stmt.setString(3, location);
+        stmt.executeUpdate();
+    }
 }
