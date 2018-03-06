@@ -7,7 +7,9 @@ package smartshuffle;
 
 /**
  *
- * @author laubera1
+ * @author rudnicka1
+ * @recent_version_date: 06/03/17
+ * 
  */
 public class SmartShuffle {
 
@@ -20,4 +22,6 @@ public class SmartShuffle {
         shuffle.Shuffle();
     }
     
+    //
+    private void Shuffle()
 }
