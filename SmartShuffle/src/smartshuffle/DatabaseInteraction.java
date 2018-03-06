@@ -35,7 +35,7 @@ public class DatabaseInteraction {
     protected void populateSongs() throws SQLException {
         //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM MasterList;");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM Library;");
 
     }
 
@@ -43,7 +43,7 @@ public class DatabaseInteraction {
 
     protected ResultSet queryMaster(String songName) throws SQLException {
         //   Statement stmt  = conn.createStatement();
-        String query = "SELECT Song from MasterList WHERE Song = ?";
+        String query = "SELECT Song from Library WHERE Song = ?";
         PreparedStatement statement2 = conn.prepareStatement(query);
         statement2.setString(1, songName);
         ResultSet rs = statement2.executeQuery();
@@ -71,7 +71,7 @@ public class DatabaseInteraction {
     }
     //insert new songs into Master
     protected void insertMaster(String Title, String tag, String location) throws SQLException{
-        String query = "INSERT INTO MasterList (`title`, `tag`, 'filelocation') VALUES (?, ?, ?);";
+        String query = "INSERT INTO Library (`title`, `tag`, 'filelocation') VALUES (?, ?, ?);";
         PreparedStatement stmt = conn.prepareStatement(query);
         stmt.setString(1, Title);
         stmt.setString(2, tag);
