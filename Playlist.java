@@ -55,6 +55,10 @@ class Playlist implements IPlaylist{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+     /**
+     * Gets the next Song from the Algorithm
+     * @return 
+     */
     @Override
     public Song requestNextSong() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
