@@ -19,9 +19,10 @@ public class Shuffler {
         //Test DB Code
         DatabaseInteraction datab = new DatabaseInteraction();
         datab.connect();
-        datab.insertMaster("Title", "tags", "names");
+        datab.insertLibrary("Title", "Artist", "Genre", "tag", "location");
         ResultSet rs = datab.querySong("pop");
         rs.findColumn("title");
+        rs.first();
         String result = rs.getString("title");
         System.out.println(result);
 
