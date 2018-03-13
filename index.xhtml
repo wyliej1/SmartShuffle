@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>TODO supply a title</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <body>
+        <script>function VideoObject(name, url, desc){
+            this.name = name;
+            this.url = url;
+        } 
+ 
+        var VideoObjectArray = new Array();
+ 
+        function objArrayAdd(nameToAdd, urlToAdd, descToAdd) {
+     
+            newVideo = new VideoObject(nameToAdd, urlToAdd, descToAdd);  
+            VideoObjectArray.push(newVideo);
+        }
+ 
+        function objArrayGet() {
+            var retrievedVideoObject = new VideoObject();
+            retrievedVideoObject = VideoObjectArray.shift(); 
+     
+            if(retrievedVideoObject) {
+                return retrievedVideoObject.name + ":" + 
+                retrievedVideoObject.url
+            } else {
+                return "VideoObjectArray is empty.";
+            }
+        }
+        </script>
+        <iframe width="420" height="315"
+            src="videos/Powerglide.mp4">
+        </iframe>
+    </body>
+</html>
