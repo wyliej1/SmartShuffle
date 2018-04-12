@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package smartshuffle;
+
 
 import java.util.LinkedList;
 
@@ -14,17 +14,16 @@ import java.util.LinkedList;
 class CategoryHolder {
     LinkedList<Category> categories = new LinkedList();
 
-    private static class Category {
+    public static class Category {
         String CategoryName;
-        LinkedList<Tag> tags;
+        LinkedList<Tag> tags = new LinkedList<Tag>();
 
-        private Category() {
-            CategoryName = null;
-            tags = null;
+        public Category() {
+        	
         }
+        
         public Category(String name) {
             CategoryName = name;
-            tags = new LinkedList();
         }
         
         /**
@@ -36,24 +35,40 @@ class CategoryHolder {
         }
     }
 
-    private static class Tag {
+    public static class Tag {
         String name;
-        int upvotes = 0;
-        int downvotes = 0;
+        private double score = 0;
 
-        private Tag() {
-            this.name = null;
+        int totalVotes = 0;
+        
+        public Tag()
+        {
+        	name = "";
+        	score = 0;
         }
-        public Tag(String name) {
-            this.name = name;
+        
+		public Tag(String name2, double s) {
+			this.name = name2;
+            score = s;
+		}
+
+		public Tag(String name2) {
+			// TODO Auto-generated constructor stub
+			name = name2;
+			score = 0;
+		}
+
+		public void setScore(double d)
+        {
+        	score = d;
         }
         
         /**
          * returns the score of the tag upvotes - downvotes
          * @return 
          */
-        protected int getScore() {
-            return upvotes - downvotes;
+        protected double getWeight() {
+            return score / totalVotes;
         }
         
         /**
@@ -61,7 +76,16 @@ class CategoryHolder {
          * @return 
          */
         protected int getTotalVotes() {
-            return upvotes + downvotes;
+            return totalVotes;
         }
+        
+		public String getName() {
+			// TODO Auto-generated method stub
+			return name;
+		}
+		public double getScore() {
+			// TODO Auto-generated method stub
+			return score;
+		}
     }
 }

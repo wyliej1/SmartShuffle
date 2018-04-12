@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package smartshuffle;
+
 
 import java.util.Queue;
 
@@ -11,8 +11,13 @@ import java.util.Queue;
  *
  * @author laubera1
  */
-class Playlist implements IPlaylist{
-
+class Playlist implements IPlaylist
+{
+	
+	public Playlist()
+	{
+		
+	}
     /**
      * Retrieves the top song in the queue that is next to be played on on screen
      * @return nextSong
@@ -55,12 +60,9 @@ class Playlist implements IPlaylist{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-     /**
-     * Gets the next Song from the Algorithm
-     * @return 
-     */
     @Override
     public Song requestNextSong() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
+
