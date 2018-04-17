@@ -6,6 +6,7 @@
 
 
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 
 /**
  *
@@ -17,6 +18,8 @@ class CategoryHolder {
     public static class Category {
         String CategoryName;
         LinkedList<Tag> tags = new LinkedList<Tag>();
+        LinkedList<PriorityQueue> queues = new LinkedList<PriorityQueue>();
+        double sum = 1.0;
 
         public Category() {
         	
@@ -31,6 +34,8 @@ class CategoryHolder {
          * @param tag 
          */
         public void addTag(Tag tag) {
+            PriorityQueue genreQueue = new PriorityQueue();
+            queues.add(genreQueue);
             tags.add(tag);
         }
     }

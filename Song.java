@@ -11,24 +11,34 @@ import java.util.ArrayList;
  *
  * @author laubera1
  */
-public class Song {
+public class Song implements Comparable<Song>{
     String title;
     String artist;
     String MP4Refernce; //path to MP4. -- Could be in database idk?
-    int duration; //in seconds
     ArrayList<CategoryHolder.Tag> tags = new ArrayList<CategoryHolder.Tag>();
+    boolean choosen;
+    double relevancy = 1;
     
     public Song(String n, CategoryHolder.Tag[] t){
     	title = n;
     	for(CategoryHolder.Tag tag : t){
     		tags.add(tag);
     	}
+        choosen = false;
 	}
+    
     protected ArrayList<CategoryHolder.Tag> getTags(){
         return tags;
     }
     
     protected String getSongInfo() {
         return title + artist;
+    }
+
+    @Override
+    public int compareTo(Song t) {
+        double comp = relevancy - t.relevancy;
+        if(comp < 0) return -1;
+        return 1;
     }
 }
