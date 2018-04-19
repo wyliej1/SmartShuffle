@@ -1,7 +1,8 @@
 
 import static java.lang.Math.sqrt;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -25,28 +26,37 @@ public class Shuffler {
     LinkedList<Song> history, unplayed;
     CategoryHolder.Category main;
 
-    public void initialize(ArrayList<Song> songs) {
+//    public void initialize(ArrayList<Song> songs) {
+    public void initialize(ArrayList<ArrayList> unProccSongs) {
         DatabaseInteraction datab = new DatabaseInteraction();
         songQueue = new LinkedList<Song>();
         //UI ui = new UI();
         //ui.initialize();
+        
+        //-------------------------------------------------
+        
         history = new LinkedList();
         unplayed = new LinkedList();
         main = new CategoryHolder.Category();
 
         //for each song in database add to shuffle algorithm
-//        ArrayList songs = getSongsFromDB();
+        //ArrayList<ArrayList> unProccSongs = datab.getSongs();
+        ArrayList songs = getSongsFromDB(unProccSongs);
         addSongsToQueues(songs);
-        
+
         for (CategoryHolder.Tag t : main.tags) {
             t.setScore(1.0);
         }
         normalize();
-        
-        songQueue.add(getSongFWQ());//first Song added
+        main.sum = main.tags.size();
+        songQueue.add(getSongFWQ());//first 5 Songs added
+        songQueue.add(getSongFWQ());
+        songQueue.add(getSongFWQ());
+        songQueue.add(getSongFWQ());
+        songQueue.add(getSongFWQ());
     }
 
-    // Master function called for adding another song to shuffle queue
+    //Returns a song object that has functions for get title get artist and get tags.
     public Song RequestNextSong() {
         history.add(songQueue.remove());
         while (songQueue.size() < 5) {
@@ -58,11 +68,11 @@ public class Shuffler {
         return songQueue.element();
     }
 
-    //upvote
+    //upvote returns nothing
     public void Upvote() {
         //grab song at top of songQueue
         Song current = songQueue.peek();
-        System.out.println("Upvoting "+current.getSongInfo());
+        System.out.println("Upvoting " + current.getSongInfo());
 
         //for each tag in song.tags, check if it exists
         for (CategoryHolder.Tag t : current.tags) {
@@ -84,16 +94,16 @@ public class Shuffler {
             }
 
             //take song.tag.score and tick up
-            ((CategoryHolder.Tag) (main.tags.get(index_of_i))).setScore(((CategoryHolder.Tag) (main.tags.get(index_of_i))).getScore()+ t.getScore());
+            ((CategoryHolder.Tag) (main.tags.get(index_of_i))).setScore(((CategoryHolder.Tag) (main.tags.get(index_of_i))).getScore() + t.getScore());
             normalize();
         }
     }
 
-    //downvote
+    //downvote returns nothing
     public void Downvote() {
         //grab song at top of songQueue
         Song current = songQueue.peek();
-        System.out.println("Downvoting "+current.getSongInfo());
+        System.out.println("Downvoting " + current.getSongInfo());
 
         //for each tag in song.tags, check if it exists
         for (CategoryHolder.Tag t : current.tags) {
@@ -119,6 +129,7 @@ public class Shuffler {
     private Song getSongFWQ() {
         //select a value
         double rand = Math.random() * main.sum;
+        System.out.println(rand);
         double tagRun = 0;
         Iterator<CategoryHolder.Tag> tagIter = main.tags.iterator();
         Iterator<PriorityQueue> queueIter = main.queues.iterator();
@@ -182,20 +193,50 @@ public class Shuffler {
 
         return dotProduct / (sqrt(magTags1) * sqrt(magTags2));
     }
-    
+
     private void normalize() {
         double sum = 0.0;
         for (CategoryHolder.Tag t : main.tags) {
             sum = sum + t.getScore();
         }
-        if(sum <= 0) return;
+        if (sum <= 0) {
+            return;
+        }
         for (CategoryHolder.Tag t : main.tags) {
-            t.setScore(t.getScore()/sum*main.tags.size());
+            t.setScore(t.getScore() / sum * main.tags.size());
         }
     }
 
-    private ArrayList getSongsFromDB() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private ArrayList<Song> getSongsFromDB(ArrayList<ArrayList> theArray) {
+        ArrayList<String> titles = theArray.get(0);
+        ArrayList<String> artists = theArray.get(1);
+        ArrayList<String> tags = theArray.get(2);
+        ArrayList<Song> songs = new ArrayList();
+
+        Iterator<String> titleIter = titles.iterator();
+        Iterator<String> artistIter = artists.iterator();
+        Iterator<String> tagsIter = tags.iterator();
+
+        while (titleIter.hasNext() && artistIter.hasNext() && tagsIter.hasNext()) {
+            String aTitle = titleIter.next();
+            String aArtist = artistIter.next();
+            String aListOfTags = tagsIter.next();
+
+            ArrayList<CategoryHolder.Tag> aTags = new ArrayList();
+            String[] rawTags = aListOfTags.split(";");
+            for (String s : rawTags) {
+                String[] r = s.split("-");
+                try {
+                    CategoryHolder.Tag tag = new CategoryHolder.Tag(r[0], Double.parseDouble(r[1]));
+                    aTags.add(tag);
+                } catch (IndexOutOfBoundsException ex) {
+                    System.out.println("warning song " + aTitle + " may not have any tags");
+                }
+            }
+            Song song = new Song(aTitle, aArtist, aTags);
+            songs.add(song);
+        }
+        return songs;
     }
 
     private void addSongsToQueues(ArrayList<Song> songs) {
@@ -238,4 +279,87 @@ public class Shuffler {
         }
     }
 
+    //returns an array list of CategoryHolder.Tags that have functions for get tag name and get score
+    //highest First.
+    public ArrayList<CategoryHolder.Tag> DisplayTopFive() {
+        ArrayList<CategoryHolder.Tag> list = new ArrayList();
+        for (CategoryHolder.Tag t : main.tags) {
+            list.add(t);
+        }
+        TagComparator cmprtr = new TagComparator();
+        list.sort(cmprtr);
+        Collections.reverse(list);
+        ArrayList<CategoryHolder.Tag> toBeReturn = new ArrayList();
+        toBeReturn.add(list.get(0));
+        toBeReturn.add(list.get(1));
+        toBeReturn.add(list.get(2));
+        toBeReturn.add(list.get(3));
+        toBeReturn.add(list.get(4));
+        return toBeReturn;
+    }
+
+    //returns an array list of CategoryHolder.Tags that have functions for get tag name and get score
+    //lowest First.
+    public ArrayList<CategoryHolder.Tag> DisplayBottomFive() {
+        ArrayList<CategoryHolder.Tag> list = new ArrayList();
+        for (CategoryHolder.Tag t : main.tags) {
+            list.add(t);
+        }
+        TagComparator cmprtr = new TagComparator();
+        list.sort(cmprtr);
+        ArrayList<CategoryHolder.Tag> toBeReturn = new ArrayList();
+        toBeReturn.add(list.get(0));
+        toBeReturn.add(list.get(1));
+        toBeReturn.add(list.get(2));
+        toBeReturn.add(list.get(3));
+        toBeReturn.add(list.get(4));
+        return toBeReturn;
+    }
+
+    //Returns an ArrayList of ArrayLists. each of the lower level ArrayList 
+    //represents a Tag and holds upto the top three songs for the tag
+    public ArrayList<ArrayList> DisplayQueues() {
+        ArrayList<ArrayList> theQueues = new ArrayList();
+        for (PriorityQueue aQueue : main.queues) {
+            boolean end = false;
+            ArrayList<Song> songs = new ArrayList();
+            PriorityQueue<Song> expendableQueue = new PriorityQueue(aQueue);
+            for (int i = 0; i < 3; i++) {
+                Song s = expendableQueue.poll();
+                    if(s == null) {
+                        end = true;
+                        break;
+                    }
+                while(s.choosen) {
+                    s = expendableQueue.poll();
+                    if(s == null) {
+                        end = true;
+                        break;
+                    }
+                }
+                if(!end) {
+                songs.add(s);
+                } else {
+                    break;
+                }
+            }
+            theQueues.add(songs);
+        }
+        return theQueues;
+    }
+
+    private static class TagComparator implements Comparator<CategoryHolder.Tag> {
+
+        public TagComparator() {
+        }
+
+        @Override
+        public int compare(CategoryHolder.Tag t, CategoryHolder.Tag t1) {
+            double comp = t.getScore() - t1.getScore();
+            if (comp < 0) {
+                return -1;
+            }
+            return 1;
+        }
+    }
 }

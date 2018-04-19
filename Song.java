@@ -19,11 +19,10 @@ public class Song implements Comparable<Song>{
     boolean choosen;
     double relevancy = 1;
     
-    public Song(String n, CategoryHolder.Tag[] t){
-    	title = n;
-    	for(CategoryHolder.Tag tag : t){
-    		tags.add(tag);
-    	}
+    public Song(String titl, String art, ArrayList<CategoryHolder.Tag> t){
+    	title = titl;
+        artist = art;
+        tags = t;
         choosen = false;
 	}
     
@@ -32,7 +31,7 @@ public class Song implements Comparable<Song>{
     }
     
     protected String getSongInfo() {
-        return title + artist;
+        return title + " " + artist;
     }
 
     @Override
