@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  *
@@ -26,6 +27,7 @@ public class DatabaseInteraction {
      *
      * @throws java.sql.SQLException
      */
+    //Establishes connection to MySQL Database
     public void connect() throws SQLException {
         conn = DriverManager.getConnection(url, "capstoneUser", "UDflyers1");
         System.out.println("Connected to MySQL Database");
@@ -40,13 +42,27 @@ public class DatabaseInteraction {
     }
 
     //query the master list and return a resultset with the query
-    protected ResultSet queryMaster(String songName) throws SQLException {
+    protected ArrayList queryLibrary() throws SQLException {
         //   Statement stmt  = conn.createStatement();
-        String query = "SELECT Song from Library WHERE Song = ?";
+        ArrayList title = new ArrayList();
+        ArrayList artist = new ArrayList();
+        ArrayList tags = new ArrayList();
+        ArrayList theArrays = new ArrayList();
+        String query = "SELECT title,artist,tags from Library";
         PreparedStatement statement2 = conn.prepareStatement(query);
-        statement2.setString(1, songName);
+       // statement2.setString(1, songName);
         ResultSet rs = statement2.executeQuery();
-        return rs;
+        while (rs.next()) {
+            title.add(rs.getString("title"));
+            artist.add(rs.getString("artist"));
+            tags.add(rs.getString("tags"));
+        }
+        theArrays.add(title);
+        theArrays.add(artist);
+        theArrays.add(tags);
+        //Title, Artist, tags int that order coming back
+        return theArrays;
+
     }
 
     //inserts a song into the song table (the queue essentially)
@@ -69,8 +85,7 @@ public class DatabaseInteraction {
     }
 
     //insert new songs into Library
-
-    protected void insertLibrary(String Title, String artist,String genre, String tag, String location) throws SQLException {
+    protected void insertLibrary(String Title, String artist, String genre, String tag, String location) throws SQLException {
         String query = "INSERT INTO `smartshuffle`.`Library` (`title`, `artist`, `genre`, `tags`, `filelocation`) VALUES (?, ?, ?, ?,?);";
         PreparedStatement stmt = conn.prepareStatement(query);
         stmt.setString(1, Title);
@@ -78,6 +93,41 @@ public class DatabaseInteraction {
         stmt.setString(3, genre);
         stmt.setString(4, tag);
         stmt.setString(5, location);
+        stmt.executeUpdate();
+    }
+//returns AWS link to Video Location
+
+    protected ResultSet queryLocation(String title) throws SQLException {
+        String query = "SELECT filelocation FROM smartshuffle.Library WHERE title = ?;";
+        PreparedStatement stmt = conn.prepareCall(query);
+        stmt.setString(1, title);
+        ResultSet rs = stmt.executeQuery();
+        return rs;
+    }
+
+    //Returns AWS link to thumbnail
+
+    protected ResultSet queryThumb(String title) throws SQLException {
+        String query = "SELECT thumblocation FROM smartshuffle.Library WHERE title = ?";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setString(1, title);
+        ResultSet rs = stmt.executeQuery();
+        return rs;
+    }
+    /*
+     //updates the library with individual tags stored in individual columns
+     protected ResultSet updateLibrary(String title){
+     String query = "UPDATE smartshuffle.Library SET "
+     }
+     */
+
+    //Updates the library songs with tags from the tag strings
+
+    protected void updateLibrary(String title, String tags) throws SQLException {
+        String query = "UPDATE smartshuffle.Library SET tags = ? WHERE title = ?";
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setString(1, tags);
+        stmt.setString(2, title);
         stmt.executeUpdate();
     }
 }
